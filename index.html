@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en-us">
+   <head>
+      <meta charset="utf-8">
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+      <title>Unity WebGL Player | STEPP2</title>
+      <link rel="shortcut icon" href="TemplateData/favicon.ico">
+      <link rel="stylesheet" href="TemplateData/style.css">
+      <script src="TemplateData/UnityProgress.js"></script>
+      <script src="Build/UnityLoader.js"></script>
+      <script>
+         var unityInstance = UnityLoader.instantiate("unityContainer", "Build/STEPP.json", {onProgress: UnityProgress});
+         
+         	// Callback for the Unity OnClose event
+         window.onbeforeunload = function(e) {
+         console.log("Calling OnClose from Browser!");
+         unityInstance.SendMessage("WebController", "OnClose");
+         var dialogText = "Would you like to continue unloading the page?";
+         e.returnValue = dialogText;
+         return dialogText;
+         };
+         
+         function readFileAsString(e) {
+         var files = e.target.files;
+         if (files.length === 0) {
+         console.log('No file is selected');
+         return;
+         }
+         
+         var reader = new FileReader();
+         reader.onload = function(event) {
+         unityInstance.SendMessage("FileImportExport", "GetFSMString", event.target.result);
+         console.log('File content:', event.target.result);
+         };
+         reader.readAsText(files[0]);
+         }	
+      </script>
+   </head>
+   <body>
+      <div class="webgl-content">
+         <div id="unityContainer" style="width: 1280px; height: 720px"></div>
+         <!-- The Modal -->
+         <div id="myModal" class="modal">
+            <!-- Modal content -->
+            <div class="modal-content">
+               <div class="modal-header">
+                  <span class="close">&times;</span>
+                  <h2>Import state diagram</h2>
+               </div>
+               <div class="modal-body">
+                  <p>Click "browse" to select a state diagram to import.</p><br>
+                  <input style="color:#ccc;" accept=".fsm" type="file" multiple="false" id="upload" onchange="readFileAsString(event);return false;">
+               </div>
+            </div>
+         </div>
+         <div class="footer">
+            <div class ="load">
+               
+            </div>
+            <div class="webgl-logo"></div>
+            <div class="fullscreen" onclick="unityInstance.SetFullscreen(1)"></div>
+            <div class="title">STEPP2</div>
+         </div>
+      </div>
+      <script>
+         // Get the modal
+         var modal = document.getElementById("myModal");
+         
+         // Get the <span> element that closes the modal
+         var span = document.getElementsByClassName("close")[0];
+         
+               // When the user clicks on <span> (x), close the modal
+               span.onclick = function() {
+               modal.style.display = "none";
+               }
+            
+      </script>
+   </body>
+</html>
